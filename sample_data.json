@@ -1,0 +1,107 @@
+{
+  "catalog": {
+    "hotels": [
+      {
+        "id": "HOT-001",
+        "location": "Kerala",
+        "name": "Kerala Nature Resort",
+        "description": "A beautiful mid-range resort surrounded by tea gardens.",
+        "tags": ["family", "mid-range", "nature"],
+        "price_per_night": 100
+      },
+      {
+        "id": "HOT-002",
+        "location": "Kerala",
+        "name": "Luxury Backwaters Villa",
+        "description": "Premium luxury stay on the backwaters.",
+        "tags": ["couples", "luxury", "nature"],
+        "price_per_night": 300
+      },
+      {
+        "id": "HOT-003",
+        "location": "Paris",
+        "name": "Paris City Center Hotel",
+        "description": "A budget friendly hotel right in the city center.",
+        "tags": ["couples", "budget", "city"],
+        "price_per_night": 80
+      }
+    ],
+    "activities": [
+      {
+        "id": "ACT-001",
+        "location": "Kerala",
+        "name": "Spice Plantation Tour",
+        "description": "Walk through aromatic spice plantations and taste local flavors.",
+        "tags": ["family", "food", "nature"],
+        "price": 50
+      },
+      {
+        "id": "ACT-002",
+        "location": "Kerala",
+        "name": "Traditional Cooking Class",
+        "description": "Learn to cook authentic Kerala cuisine.",
+        "tags": ["family", "food", "couples"],
+        "price": 80
+      },
+      {
+        "id": "ACT-003",
+        "location": "Kerala",
+        "name": "Munnar Trekking",
+        "description": "Challenging trek through the hills.",
+        "tags": ["adults", "nature", "adventure"],
+        "price": 40
+      },
+      {
+        "id": "ACT-004",
+        "location": "Paris",
+        "name": "Eiffel Tower Visit",
+        "description": "Classic Eiffel tower experience.",
+        "tags": ["family", "couples"],
+        "price": 30
+      }
+    ],
+    "transport": [
+      {
+        "id": "TPT-001",
+        "location": "Kerala",
+        "name": "Private Van 5 Days",
+        "description": "Comfortable family van for all your local travel.",
+        "tags": ["family", "mid-range"],
+        "price": 200
+      },
+      {
+        "id": "TPT-002",
+        "location": "Paris",
+        "name": "Metro Pass 3 Days",
+        "description": "Unlimited metro access.",
+        "tags": ["budget"],
+        "price": 25
+      }
+    ]
+  },
+  "traveler_profile": {
+    "name": "Smith Family",
+    "past_trips": [
+      {
+        "destination": "Thailand",
+        "duration": "7 days",
+        "type": "family",
+        "feedback": "We really enjoyed the food and nature tours. We prefer mid-range hotels that are clean and comfortable. We avoid extremely tiring adventure activities because of the kids."
+      }
+    ]
+  },
+  "requests": [
+    {
+      "id": "REQ-1",
+      "text": "5 days in Kerala for a family, mid-range, we love nature and food"
+    },
+    {
+      "id": "REQ-2",
+      "text": "3 days in Paris on a budget, just me and my partner"
+    },
+    {
+      "id": "REQ-3",
+      "text": "We want to go to Goa for 4 days"
+    }
+  ]
+}
