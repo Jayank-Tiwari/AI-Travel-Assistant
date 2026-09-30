@@ -27,12 +27,23 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(req)
       })
-      const data = await response.json()
-      setOutput(data.output)
+      
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      setLoading(false) // Hide spinner as soon as stream starts
+
+      let currentOutput = ''
+      while (true) {
+        const { value, done } = await reader.read()
+        if (done) break
+        const text = decoder.decode(value, { stream: true })
+        currentOutput += text
+        setOutput(currentOutput)
+      }
     } catch (err) {
+      setLoading(false)
       setOutput('Error generating itinerary. Please try again.')
     }
-    setLoading(false)
   }
 
   return (

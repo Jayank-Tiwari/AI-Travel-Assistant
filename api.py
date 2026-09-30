@@ -2,6 +2,7 @@ import json
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import google.generativeai as genai
@@ -12,10 +13,10 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 def load_data(filepath="sample_data.json"):
@@ -36,11 +37,12 @@ def get_requests():
 def generate_itinerary(req: RequestModel):
     api_key = os.environ.get("GEMINI_API_KEY")
     if api_key and api_key != "your_api_key_here":
-        return {"output": generate_itinerary_llm(req.model_dump(), data)}
+        return StreamingResponse(generate_itinerary_llm_stream(req.model_dump(), data), media_type="text/plain")
     else:
-        return {"output": generate_itinerary_mock(req.model_dump(), data)}
+        # For mock, just return it as a single chunk in a stream
+        return StreamingResponse(iter([generate_itinerary_mock(req.model_dump(), data)]), media_type="text/plain")
 
-def generate_itinerary_llm(request, data):
+def generate_itinerary_llm_stream(request, data):
     api_key = os.environ.get("GEMINI_API_KEY").strip().strip('"').strip("'")
     genai.configure(api_key=api_key)
     
@@ -60,31 +62,32 @@ def generate_itinerary_llm(request, data):
     "{request['text']}"
     
     Instructions:
-    1. Check if the requested location exists in the catalog. If it does NOT exist (e.g., Goa is not in the catalog), output a graceful response saying the inventory is not available for this location. Do NOT invent items.
-    2. If the location exists, create a day-by-day itinerary.
-    3. Select items that match the user's request and past feedback (e.g., family-friendly, mid-range, food).
-    4. Provide a priced quote for each selected item and the total cost.
-    5. CITE SOURCES: Every recommended hotel, activity, or transport must explicitly cite its catalog ID (e.g., [HOT-001]).
-    6. Ensure the total price equals the sum of the per-item prices (e.g. 5 nights at $100/night = $500).
+    1. Check if the requested location exists in the catalog. If it does NOT exist, output a graceful response saying inventory is not available.
+    2. Create a day-by-day itinerary if the location exists.
+    3. Select items matching user request and past feedback.
+    4. Provide a priced quote for each selected item and total cost.
+    5. CITE SOURCES: Every recommended item must explicitly cite its catalog ID (e.g., [HOT-001]).
+    6. Ensure total price equals the sum of per-item prices.
     
-    Format your response cleanly in Markdown. Include:
-    - A summary
+    Format response cleanly in Markdown. Include:
+    - Summary
     - Day-by-day breakdown with item citations and costs
-    - A priced quote section showing the math (DO NOT use LaTeX or $$ symbols, just use plain text formatting).
+    - A priced quote section showing math (DO NOT use LaTeX or $$ symbols, just use plain text formatting).
     """
     
     try:
         model = genai.GenerativeModel("gemini-3.5-flash")
-        response = model.generate_content(prompt)
-        return response.text
+        response = model.generate_content(prompt, stream=True)
+        for chunk in response:
+            yield chunk.text
     except Exception as e:
-        # Fallback to older model if 3.5 is locked
         try:
             model2 = genai.GenerativeModel("gemini-2.5-flash")
-            response2 = model2.generate_content(prompt)
-            return response2.text
+            response2 = model2.generate_content(prompt, stream=True)
+            for chunk in response2:
+                yield chunk.text
         except Exception as e2:
-            return f"Error generating itinerary via Gemini API: {str(e2)}"
+            yield f"Error generating itinerary via Gemini API: {str(e2)}"
 
 def generate_itinerary_mock(request, data):
     req_id = request.get('id', '')
