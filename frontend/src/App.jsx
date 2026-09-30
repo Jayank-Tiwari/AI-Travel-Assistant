@@ -11,7 +11,7 @@ function App() {
   const [output, setOutput] = useState('')
 
   useEffect(() => {
-    fetch('http://localhost:8000/requests')
+    fetch(`http://${window.location.hostname}:8000/requests`)
       .then(res => res.json())
       .then(data => setRequests(data))
       .catch(err => console.error("Failed to fetch requests", err))
@@ -21,7 +21,7 @@ function App() {
     setLoading(true)
     setOutput('')
     try {
-      const response = await fetch('http://localhost:8000/generate', {
+      const response = await fetch(`http://${window.location.hostname}:8000/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(req)
