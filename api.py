@@ -36,9 +36,9 @@ def get_requests():
 def generate_itinerary(req: RequestModel):
     api_key = os.environ.get("GEMINI_API_KEY")
     if api_key and api_key != "your_api_key_here":
-        return {"output": generate_itinerary_llm(req.dict(), data)}
+        return {"output": generate_itinerary_llm(req.model_dump(), data)}
     else:
-        return {"output": generate_itinerary_mock(req.dict(), data)}
+        return {"output": generate_itinerary_mock(req.model_dump(), data)}
 
 def generate_itinerary_llm(request, data):
     api_key = os.environ.get("GEMINI_API_KEY").strip().strip('"').strip("'")
